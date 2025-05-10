@@ -1,0 +1,19 @@
+name: Auto Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Apply latest ConfigMap
+      run: |
+        kubectl delete configmap nginx-website --ignore-not-found
+        kubectl create configmap nginx-website --from-file=index.html --from-file=style.css --from-file=script.js
+        kubectl rollout restart deployment nginx-website
