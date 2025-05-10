@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-website
+  template:
+    metadata:
+      labels:
+        app: nginx-website
+    spec:
+      containers:
+      - name: nginx-website
+        image: nginx
+        command: ["/bin/sh", "-c"]
+        args:
+          - "apt-get update && apt-get install -y curl && curl -o /usr/share/nginx/html/index.html https://raw.githubusercontent.com/Solid-Rocker/site1/main/index.html && nginx -g 'daemon off;'"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
